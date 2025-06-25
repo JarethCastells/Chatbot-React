@@ -32,10 +32,21 @@ const Chatbot = () => {
     setMessages(prev => [...prev, newMessage]);
   };
 
+  const normalizeText = (text) =>
+    text
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+
   const findLocalResponse = (userInput) => {
-    const input = userInput.toLowerCase().trim();
-    const exactMatch = chatbotDataset.find(item => item.question.toLowerCase() === input);
-    const partialMatch = chatbotDataset.find(item => input.includes(item.question.toLowerCase()));
+    const input = normalizeText(userInput);
+    const exactMatch = chatbotDataset.find(
+      (item) => normalizeText(item.question) === input
+    );
+    const partialMatch = chatbotDataset.find((item) =>
+      input.includes(normalizeText(item.question))
+    );
     
     if (exactMatch) {
       return {
